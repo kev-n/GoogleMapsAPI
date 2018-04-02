@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <title>Google Maps|Search</title>
+    <style>
+          #mapSearch {
+            height: 100%;
+          }         
+          html, body {
+            height: 77%;
+            width: 48rem;
+            padding: 0;
+            margin: 0 auto;
+            font-family: 'Comfortaa', cursive;
+            flex-flow: row;
+          }
+          h1 {
+            text-align: center;
+            color: #EDA725;
+            letter-spacing: 7.7px;
+          }
+          i:hover {
+            color: #EDA725;
+          }
+          p {
+            line-height: 2.48;
+          }
+          /*map styles*/
+          #description {
+            font-family: 'Comfortaa', cursive;
+            font-size: 15px;
+            font-weight: 300;
+          }
+          #infowindow-content .title {
+            font-weight: bold;
+          }
+          #infowindow-content {
+            display: none;
+          }
+          #map #infowindow-content {
+            display: block;
+            margin: 1% 25% 1% 25%;
+          }
+          .pac-card {
+            margin: 10px 10px 0 0;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            font-family: 'Comfortaa', cursive;
+          }
+          #pac-container {
+            padding-bottom: 12px;
+            margin-right: 12px;
+          }
+          .pac-controls {
+            display: inline-block;
+            padding: 5px 11px;
+          }
+          .pac-controls label {
+            font-family: 'Comfortaa', cursive;
+            font-size: 13px;
+            font-weight: 300;
+          }
+          #pac-input {
+            background-color: #fff;
+            font-family: 'Comfortaa', cursive;
+            font-size: 15px;
+            font-weight: 300;
+            margin-left: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 400px;
+          }
+          #pac-input:focus {
+            border-color: #4d90fe;
+          }
+          #title {
+            color: #fff;
+            background-color: #4d90fe;
+            font-size: 25px;
+            font-weight: 500;
+            padding: 6px 12px;
+          }
+          #target {
+            width: 345px;
+          }
+          /*menu styles*/
+          .hamburger-shell {
+            margin: 0;
+            position: fixed;
+            overflow: hidden;
+            width: 70px;
+            height: 100px;
+            overflow: auto;
+            left: calc(100% - 100px);
+            top: 20px;
+          }
+          .top, .middle {
+            position: absolute;
+            width: 62px;
+            height: 10px;
+            background-color: black;
+            transition: all 350ms ease-in-out;
+            top: 20px;
+          }
+          .middle {
+            top: 40px;
+          }
+          #menu {
+            position: fixed;
+            left: calc(100% - 292px);
+            top: 10px;
+            color: black;
+            display: none;
+            margin: 120px 30px;
+            text-decoration: none;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 100;
+            font-size: 20px;
+            text-transform: lowercase;
+            color: #333;
+            padding: 24px;
+            width: 200px;
+            text-align: right;
+          }
+          #menu a li {
+            text-decoration: none!important;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid black;
+            list-style: none;
+            color: #555;
+            transition: all 150ms ease;
+          }
+          #menu a li:hover {
+            color: #EDA725;
+            padding-right: 3px;
+          }
+          #menu a {
+            text-decoration: none;
+          }
+          .rotate {
+            transform: rotate(225deg);
+            -webkit-transform: rotate(225deg);
+            top: 30px;
+            background-color: #EDA725;
+            height: 2px;
+          }
+          .rotate-back {
+            transform: rotate(-225deg);
+            -webkit-transform: rotate(-225deg);
+            top: 30px;
+            background-color: #EDA725;
+            height: 2px;
+          }
+          .top {
+            -webkit-animation-delay: 100ms;
+          }
+          .middle {
+            -webkit-animation-delay: 250ms;
+          }
+          .bottom {
+            -webkit-animation-delay: 400ms;
+          }
+          .menu-name {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 900;
+            color: black;
+            font-size: 19.5px;
+            text-decoration: none;
+            position: absolute;
+            top: 56px;
+            left: -1px;
+            transition: all 350ms;
+          }
+          /* Bounce In */        
+          .hvr-bounce-in {
+            display: inline-block;
+            vertical-align: middle;
+            -webkit-transform: perspective(3px) translateZ(0);
+            transform: perspective(3px) translateZ(0);
+            box-shadow: 0 0 2px transparent;
+            -webkit-transition-duration: 1.9s;
+            transition-duration: 0.5s;
+            color: black;
+          }
+          .hvr-bounce-in:hover, .hvr-bounce-in:focus, .hvr-bounce-in:active {
+            -webkit-transform: scale(2.2);
+            transform: scale(2.2);
+            -webkit-transition-timing-function: cubic-bezier(0.47, 2.02, 0.31, -0.36);
+            transition-timing-function: cubic-bezier(0.47, 2.02, 0.31, -0.36);
+            color: #EDA725;
+          }
+          /* Grow Shadow */        
+          .hvr-grow-shadow {
+            vertical-align: middle;
+            -webkit-transform: perspective(1px) translateZ(0);
+            transform: perspective(1px) translateZ(0);
+            box-shadow: 0 0 1px transparent;
+            -webkit-transition-duration: 0.3s;
+            transition-duration: 0.3s;
+            -webkit-transition-property: box-shadow, transform;
+            transition-property: box-shadow, transform;
+          }
+          .hvr-grow-shadow:hover, .hvr-grow-shadow:focus, .hvr-grow-shadow:active {
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+            -webkit-transform: scale(4.8);
+            transform: scale(2.2);
+          }
+          /*fade in effects*/
+          .animate-opacity {
+          	animation: opac 1.9s
+          }
+          @keyframes opac {
+          	from {
+          		opacity: 0
+          	}
+          	to {
+          		opacity: 1
+          	}
+          }
+  </style>
+</head>
+
+<body class="container">
+    <a class="hamburger-shell">
+        <div class="hamb top"></div>
+        <div class="hamb middle"></div>
+        <div class="menu-name">MENU</div>
+        <ul id="menu">
+            <a href="#top">
+                <li>Top</li>
+            </a>
+            <a href=#>
+                <li>Home</li>
+            </a>
+            <a href="index.html">
+                <li>Autocomplete Directions</li>
+            </a>
+            <a href="rotatingSatImagery.html">
+                <li>Rotating Satelite</li>
+            </a>
+            <a href="mapSearch.html">
+                <li>Map Search</li>
+            </a>
+        </ul>
+    </a>
+    <div class="animate-opacity">
+        <div class="item">
+            <div class="item">
+                <h1>Google Maps</h1>
+                <a href="https://developers.google.com" target="none">
+                    <div class="hvr-bounce-in" style="display: table; margin: 0 auto;  position: relative;">
+                        <i class="fab fa-google"></i>
+                    </div>
+                </a>
+                <h1>Search</h1>
+            </div>
+        </div>
+        <div class="item">
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ultricies ex in ipsum elementum, ut posuere ipsum aliquet. Suspendisse tincidunt sem eu dictum dictum. Nullam elementum ultricies purus venenatis fermentum. Etiam faucibus justo sit amet quam
+                consectetur, et egestas nisi fringilla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut blandit nisi odio, vitae blandit nisl bibendum nec. In placerat orci nec metus vehicula pulvinar. Pellentesque ultrices ultricies
+                nisl eu scelerisque. Sed vestibulum molestie condimentum. Pellentesque maximus lacinia turpis, non lacinia nulla pharetra vel. Sed vitae pharetra lacus. Etiam et tempus nisi.</p>
+        </div>
+        <div class="item">
+            <p>Vivamus pharetra ipsum laoreet, accumsan leo nec, iaculis ante. Aenean a arcu cursus, rutrum magna eget, sagittis sem. Sed nec sapien et felis hendrerit cursus vel et risus. Vestibulum vestibulum volutpat nisi sit amet rhoncus. Sed sed elementum
+                tortor. Proin auctor finibus nisi, ac commodo felis convallis et. Curabitur at rhoncus risus.</p>
+        </div>
+        <div class="item">
+            <p>In maximus ante non nibh viverra egestas. Integer id sem sapien. Aenean vehicula suscipit ex ac malesuada. Nulla varius turpis tellus, nec placerat elit venenatis vehicula. Aenean consequat, libero ac aliquam accumsan, urna felis dictum lorem,
+                et porta odio nisl et arcu. Aliquam eleifend nec tortor vitae suscipit. Fusce a enim volutpat, laoreet magna quis, blandit quam. Nulla tempor elementum tristique. Etiam accumsan ante ac felis vestibulum aliquam ut eget arcu. Etiam a lacinia
+                odio, sed sagittis orci. Nunc posuere nunc rutrum faucibus iaculis. In accumsan pretium neque, sed aliquet magna.</p>
+        </div>
+        <div class="item">
+            <p>Morbi luctus velit ut nisl ultricies, congue posuere dolor vulputate. Vestibulum mollis placerat molestie. Morbi at lectus pharetra, fermentum tortor a, auctor felis. Curabitur lorem ante, viverra ac auctor ut, cursus sed nisi. Aenean quis
+                nunc turpis. Nulla facilisis commodo ipsum et porta. Nunc vitae enim ut mi viverra porta. Nam nunc diam, consectetur eu posuere eu, feugiat eget orci.</p>
+        </div>
+        <div class="item">
+            <p>Donec condimentum, erat vitae molestie fringilla, justo orci tempus turpis, sit amet tincidunt turpis ipsum a felis. Phasellus euismod feugiat elit non bibendum. Morbi non neque dictum velit iaculis aliquam et at turpis. Curabitur dictum vulputate
+                imperdiet. Phasellus id imperdiet eros. Duis aliquam, purus in tincidunt interdum, urna neque ultricies ipsum, a pretium arcu turpis at nisi. Fusce neque nulla, facilisis at tincidunt non, ullamcorper suscipit lectus.</p>
+        </div>
+        <div class="item">
+            <p>Curabitur eu lacus pretium, sollicitudin elit et, tempus felis. Vestibulum facilisis ipsum ac erat sagittis sagittis. Vestibulum tempus placerat enim, sit amet efficitur lacus sagittis vitae. Etiam volutpat odio quis nisl pulvinar sollicitudin.
+                Mauris ullamcorper laoreet dui, vestibulum iaculis ex. Nulla porta ante eu nibh scelerisque, et convallis libero ultricies. Donec vel egestas diam. Phasellus vel nibh ultricies, scelerisque enim non, feugiat tortor. Phasellus dictum augue
+                eget nibh efficitur vehicula. Integer enim libero, dignissim non mollis at, luctus et tellus. Donec eget purus vehicula, bibendum libero suscipit, tincidunt arcu. Nam vel ligula sit amet metus vestibulum blandit. Morbi mauris ex, molestie
+                vitae bibendum in, convallis in lacus.</p>
+        </div>
+    </div>
+    <input id="pac-input" class="controls" type="text" placeholder="Place search here">
+    <div id="mapSearch" class='item'></div>
+    <div class="item">
+        <p>Sed sagittis dui eu tellus gravida, in ullamcorper purus dapibus. Integer at metus quis nulla condimentum lobortis ac sagittis arcu. Fusce in orci a tellus consequat convallis in et leo. Fusce posuere, odio ac laoreet tristique, turpis arcu egestas
+            justo, sit amet posuere magna magna at turpis. Suspendisse ac elit non odio commodo lobortis. Sed nibh nisi, ultricies et lacinia at, mollis non enim. Suspendisse imperdiet, orci mollis suscipit consequat, massa augue faucibus ligula, imperdiet
+            convallis turpis sem sit amet tortor. Morbi commodo iaculis venenatis. Vestibulum tincidunt tellus ac tempor consectetur. Praesent efficitur pellentesque mattis. Nulla posuere dictum est id dignissim.
+        </p>
+    </div>
+    <a class="hvr-bounce-in" href="https://github.com/kev-n" style="display: table; margin: 0 auto; position: relative;" target="none"><i class="fab fa-github"></i></a>
+	<p class="hvr-grow-shadow" style="text-align:center; letter-spacing: -2.2px;">Designed<i class="fas fa-code" style="color: #EDA725;"></i>Developed By Kev Web Dev</p>
+    <script>
+          // Google Place Autocomplete
+          function initAutocomplete() {
+            var map = new google.maps.Map(document.getElementById('mapSearch'), {
+              center: {
+                lat: 47.616231,
+                lng: -122.340205
+              },
+                // setting the initial zoom level on map
+                zoom: 19,
+                mapTypeId: 'roadmap'
+            });
+            
+            // creating/linking search box to UI
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function() {
+              searchBox.setBounds(map.getBounds());
+            });
+            var markers = [];
+          
+            // event listener for place prediction + details based on user input
+            searchBox.addListener('places_changed', function() {
+              var places = searchBox.getPlaces();
+              if (places.length == 0) {
+                return;
+              }
+              // remove previous markers
+              markers.forEach(function(marker) {
+                marker.setMap(null);
+              });
+              markers = [];
+             
+              // retrieve icon+name+location for selected place(s)
+              var bounds = new google.maps.LatLngBounds();
+              places.forEach(function(place) {
+                if (!place.geometry) {
+                  console.log("Returned place contains no geometry");
+                  return;
+                }
+                var icon = {
+                  url: place.icon,
+                  size: new google.maps.Size(71, 71),
+                  origin: new google.maps.Point(0, 0),
+                  anchor: new google.maps.Point(17, 34),
+                  scaledSize: new google.maps.Size(25, 25)
+                };
+                // generate new marker for selected place
+                markers.push(new google.maps.Marker({
+                  map: map,
+                  icon: icon,
+                  title: place.name,
+                  position: place.geometry.location
+                }));
+                if (place.geometry.viewport) {
+                  
+                  bounds.union(place.geometry.viewport);
+                } else {
+                  bounds.extend(place.geometry.location);
+                }
+              });
+              map.fitBounds(bounds);
+            });
+          }
+          //Jquery - sticky hamburger
+          $(document).ready(function() {
+            $('.hamburger-shell').click(function() {
+              $('#menu').slideToggle(300);
+              $('.top').toggleClass('rotate');
+              $('.middle').toggleClass('rotate-back');
+              $('.menu-name').toggleClass('bump');
+              $('.bg-cover').toggleClass('reveal');
+            });
+            $('.bg-cover').click(function() {
+              $('#menu').slideToggle(300);
+              $('.top').toggleClass('rotate');
+              $('.middle').toggleClass('rotate-back');
+              $('.menu-name').toggleClass('bump');
+              $('.bg-cover').toggleClass('reveal');
+            })
+          });
+    </script>
+  
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDuGt0E5IEGkcE6ZfrKfUtE9Ko_de66pA&libraries=places&callback=initAutocomplete" async defer></script>
+</body>
+
+</html>
